@@ -335,9 +335,5 @@ long ParseNum (char *str)
 
 int GetKey (void)
 {
-#if defined(UNIX) || defined(RISCOS)
-        return getchar ();
-#else
-	return _bios_keybrd (_KEYBRD_READ)&0xff;
-#endif
+    return getchar ();
 }

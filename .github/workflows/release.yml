@@ -1,0 +1,97 @@
+name: PR
+
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build-linux:
+    name: build linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: build linux
+        run: make -f Makefile.lin
+      - uses: actions/upload-artifact@master
+        with:
+          name: xwadtools-linux
+          path: bin
+  build-windows:
+    name: build windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: base-devel git mingw-w64-x86_64-toolchain
+      - name: build windows
+        shell: msys2 {0}
+        run: make -f Makefile.win
+      - uses: actions/upload-artifact@master
+        with:
+          name: xwadtools-win
+          path: bin
+  release:
+    name: release binaries
+    runs-on: ubuntu-latest
+    needs: [build-linux, build-windows]
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@master
+        with:
+          name: xwadtools-win
+          path: artifacts/win
+      - uses: actions/download-artifact@master
+        with:
+          name: xwadtools-linux
+          path: artifacts/linux
+      - name: get version number
+        id: version
+        run: |
+          version=$(cat VERSION)
+          echo "::set-output name=version::$version"
+      - name: tar binaries
+        run: |
+          version=$(cat VERSION)
+          (cd artifacts/win && tar -zcvf xwadtools-$version-win-x86_64.tar.gz *.exe)
+          cd artifacts/linux
+          rm *.sample
+          # You can't filter on linux for the executables, and due to a quirk in the way tar
+          # works, the archive is output to the parent directory. Otherwise, tar will try to
+          # add the archive file itself to the archive it's trying to create, and will return
+          # a non-zero exit code.
+          tar -zcvf ../xwadtools-$version-linux-x86_64.tar.gz .
+      - name: release description
+        run: |
+          echo "Linux and Windows binaries of the 'xwadtools', which are various small programs for working with WAD files." >> release_description.txt
+          echo "Previously, only the source code was distributed." >> release_description.txt
+          echo "These archives only contain a subset of the tools, as I wasn't able to get some of them to build." >> release_description.txt
+          echo "That will require some further investigation, which I may do at a later date." >> release_description.txt
+          echo "Note: the version number is just one I assigned arbitrarily, starting from 1.0.0." >> release_description.txt
+      - name: create github release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          release_name: xwadtools v${{ steps.version.outputs.version }}
+          draft: false
+          prerelease: false
+          body_path: release_description.txt
+      - name: upload win artifact
+        uses: actions/upload-release-asset@v1.0.1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: artifacts/win/xwadtools-${{ steps.version.outputs.version }}-win-x86_64.tar.gz
+          asset_name: xwadtools-${{ steps.version.outputs.version }}-win-x86_64.tar.gz
+          asset_content_type: application/zip
+      - name: upload linux artifact
+        uses: actions/upload-release-asset@v1.0.1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: artifacts/xwadtools-${{ steps.version.outputs.version }}-linux-x86_64.tar.gz
+          asset_name: xwadtools-${{ steps.version.outputs.version }}-linux-x86_64.tar.gz
+          asset_content_type: application/zip

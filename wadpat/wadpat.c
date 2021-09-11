@@ -263,7 +263,11 @@ int main(int argc, char **argv)
 	 * make patches directory, ignore errors, we'll handle that later
 	 * when we try to write the graphics files into it
 	 */
+#if defined(UNIX)
 	mkdir("patches", 0755);
+#else
+	mkdir("patches");
+#endif
 
 	/* if -l, decompile only the patch in lump <lump_name> */
 	if (*lump_name) {
