@@ -51,7 +51,6 @@
 #include <dos.h>
 #include <stdarg.h>
 #include <conio.h>
-#include <bios.h>
 
 #endif
 

@@ -216,7 +216,11 @@ int main(int argc, char **argv)
 	 * make sprites directory, ignore errors, we'll handle that later
 	 * when we try to write the graphics files into it
 	 */
+#if defined(UNIX)
 	mkdir("sprites", 0755);
+#else
+	mkdir("sprites");
+#endif
 
 	/* loop over all lumps and look for the sprites */
 	for (i = 0; i < wf->wh.numlumps; i++) {

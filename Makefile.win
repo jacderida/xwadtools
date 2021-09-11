@@ -11,7 +11,7 @@ ENDIAN =
 #	-DUNIX
 #	-DMSDOS
 # The Cygwin environment for NT and Win9x just is another UNIX and not DOS!
-OS = -DUNIX
+OS = -DMSDOS
 
 # we use GNU C from Cygnus
 CC = gcc
@@ -43,12 +43,12 @@ all:
 	cd qmus2mid; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
 	cd wadtxls; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
 	cd bsp; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
-	cd idbsp; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
+	#cd idbsp; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
 	cd wadlc; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
 	cd wadldc; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
 	cd wadgc; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
 	cd wadext; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
-	cd wadtex; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
+	#cd wadtex; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
 	cd wadflat; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
 	cd wadsprit; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
 	cd wadpat; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
@@ -56,14 +56,16 @@ all:
 	cd idmultigen; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
 	cd raw2ppm; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
 	cd raw2sfx; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
-	cd reject; $(MAKE) CPP=$(CPP) CPPFLAGS=$(CPPFLAGS)
+	#cd reject; $(MAKE) CPP=$(CPP) CPPFLAGS=$(CPPFLAGS)
 	cd warm; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
 	cd slige; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
 	cd dmpsmu/source; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
 	cd swantbls; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
 	cd acc; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS) LIBDIR=$(LIBDIR)
-	cd deutex; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
-	cd listacs; $(MAKE) CPP=$(CPP) CPPFLAGS=$(CPPFLAGS)
+	#cd deutex; $(MAKE) CC=$(CC) CFLAGS=$(CFLAGS)
+	#cd listacs; $(MAKE) CPP=$(CPP) CPPFLAGS=$(CPPFLAGS)
+	mkdir bin
+	find . -type f -executable ! -name "*.sh" ! -name "*.c" ! -name "*.tcl" -exec mv "{}" bin \; 
 
 install:
 	-mkdir -p $(LIBDIR)

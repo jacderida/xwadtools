@@ -158,7 +158,11 @@ int main(int argc, char **argv)
 	wf = open_wad(*argv);
 
 	/* just make flats directory, ignore errors, deal with it later */
+#if defined(UNIX)
 	mkdir("flats", 0755);
+#else
+	mkdir("flats");
+#endif
 
 	/* loop over all lumps and look for the flats */
 	for (i = 0; i < wf->wh.numlumps; i++) {
