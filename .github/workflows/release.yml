@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: build linux
-        run: make -f Makefile.lin
+        run:  make -f Makefile.lin
       - uses: actions/upload-artifact@master
         with:
           name: xwadtools-linux
@@ -60,6 +60,7 @@ jobs:
           (cd artifacts/win && tar -zcvf xwadtools-$version-win-x86_64.tar.gz *.exe)
           cd artifacts/linux
           rm *.sample
+          chmod 0755 **
           # You can't filter on linux for the executables, and due to a quirk in the way tar
           # works, the archive is output to the parent directory. Otherwise, tar will try to
           # add the archive file itself to the archive it's trying to create, and will return
